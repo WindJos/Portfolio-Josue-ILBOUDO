@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root{
   --ink:#0a1330;
@@ -15,9 +15,13 @@
   --glass: rgba(255,255,255,0.09);
   --glass-strong: rgba(255,255,255,0.16);
   --glass-border: rgba(255,255,255,0.26);
-  --display: 'Big Shoulders Display', sans-serif;
+  /* bold, flowing sans-serif — the "cursive" energy of the page lives in Unbounded's
+     rounded, connected-feeling curves rather than in an actual script face */
+  --display: 'Unbounded', sans-serif;
   --body: 'Space Grotesk', sans-serif;
   --mono: 'IBM Plex Mono', monospace;
+  /* handwriting-flavoured serif, reserved for one or two highlighted words only */
+  --accent: 'Instrument Serif', serif;
   --max: 1180px;
 }
 
@@ -41,6 +45,54 @@ a{color:inherit;}
 img,video{max-width:100%;display:block;}
 
 .wrap{max-width:var(--max);margin:0 auto;padding:0 28px;}
+
+/* ---------- fluid grid background (ambient, behind all content) ----------
+   Markup: add this once, as the very first element inside <body>:
+     <div class="fluid-grid" aria-hidden="true"></div>
+   It is fixed/pointer-events:none/negative z-index, so it needs no other
+   markup changes and sits quietly behind header, hero, sections, footer. */
+.fluid-grid{
+  position:fixed;
+  inset:-15%;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.55;
+  mix-blend-mode:screen;
+  background-image:
+    repeating-linear-gradient(0deg,   transparent 0 118px, var(--line-strong) 118px 119px),
+    repeating-linear-gradient(90deg,  transparent 0 156px, var(--line-strong) 156px 157px),
+    repeating-linear-gradient(45deg,  transparent 0 172px, rgba(72,180,255,0.20) 172px 173px),
+    repeating-linear-gradient(135deg, transparent 0 148px, rgba(240,223,192,0.16) 148px 149px);
+  background-position:0 0, 0 0, 0 0, 0 0;
+  animation:grid-drift 52s ease-in-out infinite;
+}
+.fluid-grid::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,  transparent 0 71px, rgba(251,246,236,0.07) 71px 72px),
+    repeating-linear-gradient(90deg, transparent 0 93px, rgba(251,246,236,0.07) 93px 94px);
+  background-position:0 0, 0 0;
+  animation:grid-drift-fine 37s ease-in-out infinite reverse;
+}
+/* irregular, non-repeating-feeling waypoints — each layer travels a
+   different distance/direction so the crossings drift like a loose net,
+   constantly re-forming new squares, rectangles and triangles */
+@keyframes grid-drift{
+  0%   { background-position: 0 0,      0 0,       0 0,      0 0; }
+  22%  { background-position: 64px -36px, -48px 70px, 96px 30px, -60px -54px; }
+  47%  { background-position: 118px 24px, 26px -128px, -20px 150px, 132px 18px; }
+  71%  { background-position: 30px 96px, -110px -30px, -84px 24px, 44px 108px; }
+  100% { background-position: 0 0,      0 0,       0 0,      0 0; }
+}
+@keyframes grid-drift-fine{
+  0%,100%{ background-position: 0 0, 0 0; }
+  50%{ background-position: -58px 42px, 42px -58px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .fluid-grid, .fluid-grid::after{ animation:none; }
+}
 
 /* ---------- crop mark corners (signature element) ---------- */
 .reg-marks{position:relative;}
@@ -138,14 +190,29 @@ header{
   text-transform:uppercase;
   max-width:14ch;
 }
+/* the one or two words wrapped in <em> break out of the bold sans and
+   drop into the handwriting serif — a quiet, deliberate accent, not a shout */
 .hero h1 em{
-  font-style:normal;
+  font-family:var(--accent);
+  font-style:italic;
+  font-weight:400;
+  text-transform:none;
+  letter-spacing:0;
   background:linear-gradient(120deg, var(--beige) 0%, var(--beige-bright) 35%, var(--blue-3) 60%, var(--beige) 100%);
   background-size:250% auto;
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
   animation:shine 6s linear infinite;
+}
+
+/* reusable utility for a highlighted word or two anywhere else in the page —
+   same handwriting-serif accent, used sparingly */
+.hand-accent{
+  font-family:var(--accent);
+  font-style:italic;
+  font-weight:400;
+  color:var(--beige-bright);
 }
 .hero p{
   max-width:52ch;
@@ -165,7 +232,10 @@ header{
 }
 
 /* ---------- marquee slug line ---------- */
+/* NB: for a seamless loop the HTML content of .marquee-track should be
+   duplicated once (the same list of words printed twice back to back) */
 .marquee{
+  position:relative;
   border-bottom:1px solid var(--line);
   overflow:hidden;
   white-space:nowrap;
@@ -173,23 +243,43 @@ header{
   background:rgba(255,255,255,0.05);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
+  /* fade the strip out at both edges instead of hard-cutting the words */
+  -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image:linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
 }
 .marquee-track{
-  display:inline-block;
+  display:inline-flex;
+  align-items:baseline;
   font-family:var(--mono);
   font-size:13px;
   letter-spacing:.08em;
   text-transform:uppercase;
   color:var(--paper-dim);
   animation:scroll 32s linear infinite;
+  will-change:transform;
 }
-.marquee-track span{color:var(--beige); padding:0 10px;}
+.marquee:hover .marquee-track{animation-play-state:paused;}
+.marquee-track span{
+  color:var(--beige);
+  padding:0 10px;
+  display:inline-block;
+  animation:tick-pulse 3.2s ease-in-out infinite;
+}
+/* stagger the separators so the pulse ripples through the strip
+   instead of blinking all at once */
+.marquee-track span:nth-child(3n+1){animation-delay:0s;}
+.marquee-track span:nth-child(3n+2){animation-delay:.4s;}
+.marquee-track span:nth-child(3n){animation-delay:.8s;}
 @keyframes scroll{
   from{transform:translateX(0);}
   to{transform:translateX(-50%);}
 }
+@keyframes tick-pulse{
+  0%,100%{color:var(--beige); opacity:.8;}
+  50%{color:var(--blue-3); opacity:1;}
+}
 @media (prefers-reduced-motion: reduce){
-  .marquee-track, .brand span, .hero h1 em{animation:none;}
+  .marquee-track, .marquee-track span, .brand span, .hero h1 em{animation:none;}
 }
 
 /* ---------- section shell ---------- */
