@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Espace privé — WindJos Graphic</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header>
+  <nav class="nav wrap" style="padding-left:0;padding-right:0;">
+    <a href="index.html" class="brand">WINDJOS <span>GRAPHIC</span></a>
+    <span class="nav-cta" style="pointer-events:none;">Espace privé</span>
+  </nav>
+</header>
+
+<div class="admin-shell">
+  <h1>Ajouter une création</h1>
+  <p class="admin-sub">Cette page publie directement dans le dépôt GitHub. Chaque ajout devient un commit et le site public se met à jour automatiquement (1 à 2 minutes).</p>
+
+  <div class="warn-box">
+    <strong>Sécurité.</strong> Cette page est techniquement accessible par son URL, mais rien ne peut être publié sans ton token GitHub personnel. Ne partage jamais ce token, ne l'enregistre que dans <em>ce</em> navigateur, et utilise un token à portée limitée (lecture/écriture de ce seul dépôt). Le token n'est jamais envoyé ailleurs qu'à l'API GitHub.
+  </div>
+
+  <div class="card-box">
+    <div class="field">
+      <label for="cfgOwner">Utilisateur / organisation GitHub</label>
+      <input type="text" id="cfgOwner" placeholder="ex: josue-ilboudo">
+    </div>
+    <div class="field">
+      <label for="cfgRepo">Nom du dépôt</label>
+      <input type="text" id="cfgRepo" placeholder="ex: portfolio">
+    </div>
+    <div class="field">
+      <label for="cfgBranch">Branche</label>
+      <input type="text" id="cfgBranch" value="main">
+    </div>
+    <div class="field">
+      <label for="cfgToken">Token GitHub (fine-grained, permission Contents: Read & write)</label>
+      <input type="password" id="cfgToken" placeholder="github_pat_...">
+    </div>
+    <button class="btn btn-ghost" id="saveConfig">Enregistrer pour cette session</button>
+    <button class="btn btn-ghost" id="clearConfig">Effacer</button>
+    <div class="status" id="cfgStatus"></div>
+  </div>
+
+  <div class="card-box">
+    <div class="field">
+      <label for="itemType">Type de fichier</label>
+      <select id="itemType">
+        <option value="image">Visuel (image)</option>
+        <option value="video">Vidéo / motion design</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="itemFile">Fichier</label>
+      <input type="file" id="itemFile" accept="image/*,video/*">
+    </div>
+    <div class="field">
+      <label for="itemTitle">Titre (optionnel)</label>
+      <input type="text" id="itemTitle" placeholder="ex: Visuel campagne Ramadan">
+    </div>
+    <div class="field">
+      <label for="itemCategory">Catégorie (optionnel — sert de filtre sur le site)</label>
+      <input type="text" id="itemCategory" placeholder="ex: Facebook, Publicité, Identité visuelle...">
+    </div>
+    <button class="btn" id="publishBtn">Publier</button>
+    <div class="status" id="publishStatus"></div>
+  </div>
+
+  <div class="card-box">
+    <div style="font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--sage);margin-bottom:16px;">Contenu déjà publié</div>
+    <div id="manifestList"></div>
+    <div class="status" id="listStatus"></div>
+  </div>
+</div>
+
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
